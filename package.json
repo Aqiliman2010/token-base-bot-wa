@@ -1,0 +1,24 @@
+{
+  "name": "voxstrom",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@whiskeysockets/baileys": "github:seiren-primrose/PL-Baileys-old",
+    "axios": "^1.10.0",
+    "chalk": "^4.1.2",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.4.7",
+    "express": "^5.1.0",
+    "figlet": "^1.5.0",
+    "node-telegram-bot-api": "^0.64.0",
+    "pino": "^9.7.0"
+  },
+  "keywords": [],
+  "author": "Alwayskayzen",
+  "license": "ISC",
+  "description": "Tok Nak Berak Tok",
+  "version": "1.0.0"
+}

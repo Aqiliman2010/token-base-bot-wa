@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Login</title>
+  <style>
+    body {
+      background: #0f172a;
+      font-family: 'Segoe UI', sans-serif;
+      color: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .login-box {
+      background: #1e293b;
+      padding: 2rem;
+      border-radius: 12px;
+      width: 300px;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin: 1rem 0;
+      border-radius: 6px;
+      border: none;
+      font-size: 1rem;
+    }
+
+    button {
+      background: #10b981;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .msg {
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <h2>Admin Login</h2>
+    <input type="text" id="adminkey" placeholder="Masukkan Admin Key" />
+    <button onclick="login()">Login</button>
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <script>
+    async function login() {
+      const key = document.getElementById('adminkey').value.trim();
+      const msg = document.getElementById('msg');
+
+      if (!key) {
+        msg.innerHTML = '⚠️ Sila masukkan admin key';
+        msg.style.color = 'yellow';
+        return;
+      }
+
+      const res = await fetch('/adminlogin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        localStorage.setItem('adminSessionKey', key);
+        window.location.href = '/admin.html';
+      } else {
+        msg.innerHTML = '❌ Key salah atau tidak sah';
+        msg.style.color = 'red';
+      }
+    }
+  </script>
+</body>
+</html>

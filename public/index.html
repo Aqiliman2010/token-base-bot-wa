@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WhatsApp Crasher Panel</title>
+  <style>
+    body {
+      background: #1e1e2f;
+      color: #f0f0f0;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      font-size: 28px;
+      color: #00ffff;
+    }
+
+    .panel {
+      background: #2a2a3d;
+      padding: 30px;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 0 10px rgba(0,255,255,0.3);
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      font-weight: bold;
+      color: #00ffff;
+    }
+
+    select, input {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      background: #3a3a4f;
+      color: white;
+      font-size: 16px;
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background: #00ffff;
+      border: none;
+      border-radius: 6px;
+      color: #1e1e2f;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .logout-btn {
+      background: #ff4d4d;
+      margin-top: 10px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    .modal.show {
+      display: flex;
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      background: #222;
+      color: #f0f0f0;
+      padding: 25px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+      animation: fadeIn 0.3s ease;
+      box-shadow: 0 0 20px rgba(0,255,255,0.4);
+    }
+
+    @keyframes fadeIn {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .spinner {
+      border: 5px solid #444;
+      border-top: 5px solid #00ffff;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      margin: 20px auto;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .result-box {
+      margin-top: 20px;
+      border: 2px solid #00ffff;
+      border-radius: 12px;
+      padding: 15px;
+      background: #111122;
+      color: #ccffcc;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 22px;
+      color: #fff;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .close-btn:hover {
+      color: #00ffff;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>💥 WhatsApp Crasher Panel</h2>
+
+  <div class="panel">
+    <label for="command">Pilih Command:</label>
+    <select id="command">
+      <option disabled selected value="">-- Pilih Command --</option>
+      <option value="voxstromvip">💣 voxstromvip</option>
+      <option value="invisiblevip">🕵️ invisiblevip</option>
+      <option value="uisystem">🧩 uisystem</option>
+      <option value="trashervip">🗑️ trashervip</option>
+      <option value="testreply">✅ testreply</option>
+    </select>
+
+    <label for="number">Nombor WhatsApp:</label>
+    <input type="text" id="number" placeholder="Contoh: 6281234567890" />
+
+    <button onclick="sendCommand()">HANTAR COMMAND 🚀</button>
+    <button class="logout-btn" onclick="logout()">LOGOUT 🔐</button>
+  </div>
+
+  <div class="modal" id="logModal">
+    <div class="modal-content" id="modalContent">
+      <div class="spinner"></div>
+      <p>Sedang menghantar arahan...</p>
+    </div>
+  </div>
+
+  <script>
+    // Redirect ke login jika tiada session
+    window.addEventListener("DOMContentLoaded", () => {
+      const sessionKey = localStorage.getItem("sessionKey");
+      if (!sessionKey) {
+        window.location.href = "/login.html";
+      }
+    });
+
+    function showModal() {
+      document.getElementById("logModal").classList.add("show");
+    }
+
+    function closeModal() {
+      document.getElementById("logModal").classList.remove("show");
+    }
+
+    function logout() {
+      localStorage.removeItem("sessionKey");
+      window.location.href = "/login.html";
+    }
+
+    async function sendCommand() {
+      const command = document.getElementById("command").value;
+      const number = document.getElementById("number").value;
+      const modal = document.getElementById("logModal");
+      const modalContent = document.getElementById("modalContent");
+
+      if (!command || !number) {
+        alert("⚠️ Sila pilih command dan masukkan nombor terlebih dahulu.");
+        return;
+      }
+
+      const sessionKey = localStorage.getItem("sessionKey");
+      if (!sessionKey) return window.location.href = "/login.html";
+
+      modalContent.innerHTML = `
+        <div class="spinner"></div>
+        <p>Sedang menghantar arahan...</p>
+      `;
+      showModal();
+
+      try {
+        const res = await fetch("/send", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-session-key": sessionKey
+          },
+          body: JSON.stringify({ command, number })
+        });
+
+        const data = await res.json();
+        const isSuccess = !data.error;
+
+        setTimeout(() => {
+          modalContent.innerHTML = `
+            <button class="close-btn" onclick="closeModal()">✖</button>
+            <div class="result-box">
+              <p><strong>Status:</strong> ${isSuccess ? '✅ Successful' : '❌ Unsuccessful'}</p>
+              <p><strong>Target:</strong> ${number}</p>
+            </div>
+            <p style="margin-top: 20px; font-size: 15px; color: #ff9999;">
+              💥 TARGET BERHASIL DIMUSNAHKAN HARAP JEDA 5 MENIT SEBELUM MENGGUNAKAN LAGI
+            </p>
+          `;
+        }, 4000);
+      } catch (err) {
+        modalContent.innerHTML = `
+          <button class="close-btn" onclick="closeModal()">✖</button>
+          <div class="result-box">
+            <p><strong>Status:</strong> ❌ Error</p>
+            <p><strong>Target:</strong> ${number}</p>
+          </div>
+          <p style="margin-top: 20px; font-size: 15px; color: #ff9999;">
+            💥 GAGAL MENGHANTAR PERINTAH. SILA CUBA SEMULA.
+          </p>
+        `;
+      }
+    }
+
+    window.addEventListener("click", function (e) {
+      const modal = document.getElementById("logModal");
+      if (e.target === modal) closeModal();
+    });
+  </script>
+</body>
+</html>
